@@ -5,15 +5,9 @@ import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
 
 import { ID3Loader } from "~/core/i3d/loading";
-import { useWireframe } from "~/core/utils/wireframe";
 
 function MainScene() {
   const model = useLoader(ID3Loader, "/tesla-model-3.id3.json");
-  useWireframe(model, {
-    material: { color: 0x00ff00, transparent: true, opacity: 0.5 },
-    thresholdAngle: 15,
-    wireframeOnly: true,
-  });
   return (
     <group>
       <primitive object={model} />
