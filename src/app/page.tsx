@@ -1,16 +1,17 @@
 "use client";
 
 import { OrbitControls } from "@react-three/drei";
-import { Canvas } from "@react-three/fiber";
+import { Canvas, useLoader } from "@react-three/fiber";
 import { useMemo } from "react";
 
-import { type I3DObject, loadModel as loadID3Model } from "~/core/i3d";
-import id3Model from "~/models/tesla-model-3.json";
+import { type I3DObject, ID3Loader } from "~/core/i3d";
 
 function MainScene() {
-  const model = useMemo(() => {
-    return loadID3Model(id3Model as I3DObject);
-  }, []);
+  const model = useLoader(ID3Loader, "/tesla-model-3.id3.json");
+  if (!model) {
+    console.error("No model loaded");
+    return null;
+  }
   return (
     <group>
       <primitive object={model} />
