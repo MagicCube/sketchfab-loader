@@ -31,11 +31,11 @@
   },
   "include": [
     ".eslintrc.cjs",
+    "*.config.js",
+    "*.config.cjs",
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    "**/*.cjs",
-    "**/*.js",
     ".next/types/**/*.ts"
   ],
   "exclude": ["node_modules"]
