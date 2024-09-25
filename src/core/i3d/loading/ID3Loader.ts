@@ -152,7 +152,7 @@ export class ID3Loader extends Loader<Object3D> {
     ];
     const material = new MeshStandardMaterial({
       color: BASIC_COLORS[parseInt(id3Mesh.id) % BASIC_COLORS.length],
-      transparent: false,
+      transparent: true,
       opacity: 1,
       roughness: 0.5,
       metalness: 0.5,
