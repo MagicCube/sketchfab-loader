@@ -7,10 +7,10 @@ export interface I3DGenericObject<T extends I3DObjectType> {
   id: string;
   name: string;
   type: T;
+  children: I3DObject[];
 }
 
 export interface I3DGroup extends I3DGenericObject<I3DObjectType.Group> {
-  children: I3DObject[];
   matrix?: number[];
 }
 
@@ -23,6 +23,7 @@ export interface I3DPrimitive {
 
 export interface I3DGeometry {
   vertices: number[];
+  normals: number[];
   uvs: number[];
   primitives: I3DPrimitive[];
 }

@@ -14,7 +14,7 @@ import {
   type SFMesh,
 } from "./types";
 
-export function loadSketchfabModel(rootObject: SFObject) {
+export function loadModel(rootObject: SFObject) {
   const root = parseObject(rootObject);
   return root;
 }
@@ -34,7 +34,7 @@ function parseObject(sfObject: SFObject): I3DObject {
 function parseGroup(sfGroup: SFGroup | SFMeshObject): I3DGroup {
   const id3Group: I3DGroup = {
     type: I3DObjectType.Group,
-    id: sfGroup.getInstanceID(),
+    id: sfGroup.getInstanceID().toString(),
     name: sfGroup.getName(),
     children: [],
   };
@@ -64,12 +64,14 @@ function parseMesh(sfMesh: SFMesh): I3DMesh {
   const attributes = sfMesh.getAttributes();
   return {
     type: I3DObjectType.Mesh,
-    id: sfMesh.getInstanceID(),
+    id: sfMesh.getInstanceID().toString(),
     name: sfMesh.getName(),
     geometry: {
       vertices: Array.from(attributes.Vertex.getElements()),
+      normals: Array.from(attributes.Normal.getElements()),
       uvs: Array.from(attributes.TexCoord0.getElements()),
       primitives,
     },
+    children: [],
   };
 }

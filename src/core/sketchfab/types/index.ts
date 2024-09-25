@@ -6,7 +6,7 @@ export enum SFObjectType {
 
 export interface SFGenericObject<T extends SFObjectType> {
   getTypeID(): T;
-  getInstanceID(): string;
+  getInstanceID(): number;
   getName(): string;
   children: SFObject[];
 }
