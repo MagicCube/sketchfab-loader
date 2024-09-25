@@ -101,7 +101,6 @@ export class ID3Loader extends Loader<Object3D> {
     const group = new Group();
     for (const child of id3Group.children) {
       if (child.id === "1039") {
-        console.info(child);
         continue;
       }
       group.add(this._parseObject(child));
