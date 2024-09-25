@@ -2,13 +2,13 @@ export interface Traversable {
   children: Traversable[];
 }
 
-export function traverse<T extends Traversable>(
+export function forEach<T extends Traversable>(
   obj: T,
   callback: (obj: T) => void,
 ) {
   callback(obj);
   for (const child of obj.children) {
-    traverse(child as T, callback);
+    forEach(child as T, callback);
   }
 }
 
