@@ -4,7 +4,7 @@ import {
   I3DObjectType,
   type I3DMesh,
   type I3DPrimitive,
-} from "~/core/i3d";
+} from "~/core/i3d/types";
 
 import {
   type SFObject,
@@ -14,24 +14,28 @@ import {
   type SFMesh,
 } from "./types";
 
-export function loadModel(rootObject: SFObject) {
-  const root = parseObject(rootObject);
+const EXPORT_NORMAL = false;
+const EXPORT_UV = false;
+
+export function convertModel(model: SFObject) {
+  const root = convertObject(model);
   return root;
 }
 
-function parseObject(sfObject: SFObject): I3DObject {
+function convertObject(sfObject: SFObject): I3DObject {
   switch (sfObject.getTypeID()) {
     case SFObjectType.Group:
     case SFObjectType.MeshObject:
-      return parseGroup(sfObject as SFGroup | SFMeshObject);
+      return convertGroup(sfObject as SFGroup | SFMeshObject);
     case SFObjectType.Mesh:
-      return parseMesh(sfObject as SFMesh);
+      return convertMesh(sfObject as SFMesh);
     default:
+      console.error("Unsupported object type", sfObject);
       throw new Error(`Unsupported object type: ${sfObject.getTypeID()}`);
   }
 }
 
-function parseGroup(sfGroup: SFGroup | SFMeshObject): I3DGroup {
+function convertGroup(sfGroup: SFGroup | SFMeshObject): I3DGroup {
   const id3Group: I3DGroup = {
     type: I3DObjectType.Group,
     id: sfGroup.getInstanceID().toString(),
@@ -43,12 +47,12 @@ function parseGroup(sfGroup: SFGroup | SFMeshObject): I3DGroup {
     id3Group.matrix = Array.from(sfMeshObject.getMatrix());
   }
   for (const child of sfGroup.children) {
-    id3Group.children.push(parseObject(child));
+    id3Group.children.push(convertObject(child));
   }
   return id3Group;
 }
 
-function parseMesh(sfMesh: SFMesh): I3DMesh {
+function convertMesh(sfMesh: SFMesh): I3DMesh {
   const primitives = sfMesh
     .getPrimitives()
     .map((primitive) => {
@@ -68,9 +72,13 @@ function parseMesh(sfMesh: SFMesh): I3DMesh {
     name: sfMesh.getName(),
     geometry: {
       vertices: Array.from(attributes.Vertex.getElements()),
-      normals: Array.from(attributes.Normal.getElements()),
-      uvs: Array.from(attributes.TexCoord0.getElements()),
       primitives,
+      normals: EXPORT_NORMAL
+        ? Array.from(attributes.Normal.getElements())
+        : undefined,
+      uvs: EXPORT_UV
+        ? Array.from(attributes.TexCoord0.getElements())
+        : undefined,
     },
     children: [],
   };

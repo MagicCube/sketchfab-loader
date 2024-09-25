@@ -3,19 +3,17 @@
 import { OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { useMemo } from "react";
-import { Group } from "three";
 
 import { type I3DObject, loadModel as loadID3Model } from "~/core/i3d";
 import id3Model from "~/models/tesla-model-3.json";
 
 function MainScene() {
-  const mesh = useMemo(() => {
-    const mesh = loadID3Model(id3Model as I3DObject);
-    return mesh;
+  const model = useMemo(() => {
+    return loadID3Model(id3Model as I3DObject);
   }, []);
   return (
     <group>
-      <primitive object={mesh!} />
+      <primitive object={model} />
     </group>
   );
 }
@@ -29,6 +27,7 @@ export default function HomePage() {
         camera={{
           zoom: 1.66,
           far: 10000,
+          near: 0.00001,
           position: [0, 0, 500],
         }}
         gl={{ antialias: true, alpha: true }}

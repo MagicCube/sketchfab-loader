@@ -14,7 +14,9 @@ export interface I3DGroup extends I3DGenericObject<I3DObjectType.Group> {
   matrix?: number[];
 }
 
-export type I3DPrimitiveMode = 4 | 5;
+// 5: TriangleStripDrawMode
+// 1: TrianglesDrawMode
+export type I3DPrimitiveMode = 1 | 5;
 
 export interface I3DPrimitive {
   mode: I3DPrimitiveMode;
@@ -23,9 +25,9 @@ export interface I3DPrimitive {
 
 export interface I3DGeometry {
   vertices: number[];
-  normals: number[];
-  uvs: number[];
   primitives: I3DPrimitive[];
+  normals?: number[];
+  uvs?: number[];
 }
 
 export interface I3DMesh extends I3DGenericObject<I3DObjectType.Mesh> {
