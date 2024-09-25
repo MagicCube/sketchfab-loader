@@ -8,13 +8,18 @@ export interface SFGenericObject<T extends SFObjectType> {
   getTypeID(): T;
   getInstanceID(): number;
   getName(): string;
+  getStateSet(): SFStateSet | undefined;
   children: SFObject[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface SFGroup extends SFGenericObject<SFObjectType.Group> {
-  // Textures
+export type SFTextureAttributeArray = [];
+
+export interface SFStateSet {
+  _textureAttributeArrayList: SFTextureAttributeArray[];
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
+export interface SFGroup extends SFGenericObject<SFObjectType.Group> {}
 
 export interface SFMeshObject extends SFGenericObject<SFObjectType.MeshObject> {
   getMatrix(): number[];
