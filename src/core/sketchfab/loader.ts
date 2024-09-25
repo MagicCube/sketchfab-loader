@@ -4,7 +4,7 @@ import {
   I3DObjectType,
   type I3DMesh,
   type I3DPrimitive,
-} from '~/loader/i3d';
+} from "~/core/i3d";
 
 import {
   type SFObject,
@@ -12,7 +12,7 @@ import {
   type SFGroup,
   type SFMeshObject,
   type SFMesh,
-} from './types';
+} from "./types";
 
 export function loadSketchfabModel(rootObject: SFObject) {
   const root = parseObject(rootObject);
