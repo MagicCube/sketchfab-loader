@@ -2,9 +2,8 @@
 
 import { OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
-import { useMemo } from "react";
 
-import { type I3DObject, ID3Loader } from "~/core/i3d";
+import { ID3Loader } from "~/core/i3d/loading";
 
 function MainScene() {
   const model = useLoader(ID3Loader, "/tesla-model-3.id3.json");

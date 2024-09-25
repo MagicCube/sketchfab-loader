@@ -18,7 +18,7 @@ import {
   type I3DObject,
   I3DObjectType,
   type I3DGroup,
-} from "./types";
+} from "../types";
 
 const textDecoder = new TextDecoder();
 

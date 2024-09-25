@@ -1,7 +1,7 @@
-import { convertModel } from "./core/sketchfab/converter";
-import { type SFObject } from "./core/sketchfab/types";
+import { type SFObject } from "./core/sketchfab";
+import { convertModel } from "./core/sketchfab/converting";
 
-Object.assign(window as unknown as any, {
+Object.assign(window as unknown as never, {
   convertModel(model: SFObject) {
     const result = convertModel(model);
     return result;

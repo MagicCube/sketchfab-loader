@@ -11,6 +11,7 @@ export interface SFGenericObject<T extends SFObjectType> {
   children: SFObject[];
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface SFGroup extends SFGenericObject<SFObjectType.Group> {
   // Textures
 }

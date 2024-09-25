@@ -12,7 +12,7 @@ import {
   type SFGroup,
   type SFMeshObject,
   type SFMesh,
-} from "./types";
+} from "../types";
 
 const EXPORT_NORMAL = false;
 const EXPORT_UV = false;
