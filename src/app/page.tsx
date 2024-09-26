@@ -4,10 +4,10 @@ import { OrbitControls } from "@react-three/drei";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { Suspense } from "react";
 
-import { ID3Loader } from "~/core/i3d/loading";
+import { Tip3Loader } from "~/core/tip3/loading";
 
 function MainScene() {
-  const model = useLoader(ID3Loader, "/tesla-model-3.id3.json");
+  const model = useLoader(Tip3Loader, "/tesla-model-3.tip3.json");
 
   return (
     <group>

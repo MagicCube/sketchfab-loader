@@ -1,28 +1,11 @@
-import {
-  BufferAttribute,
-  BufferGeometry,
-  DoubleSide,
-  FileLoader,
-  Group,
-  Loader,
-  LoaderUtils,
-  Matrix4,
-  Mesh,
-  MeshStandardMaterial,
-  type Object3D,
-} from "three";
+import * as THREE from "three";
 import { toTrianglesDrawMode } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-import {
-  type I3DMesh,
-  type I3DObject,
-  I3DObjectType,
-  type I3DGroup,
-} from "../types";
+import * as tip3 from "../types";
 
 const textDecoder = new TextDecoder();
 
-export class ID3Loader extends Loader<Object3D> {
+export class Tip3Loader extends THREE.Loader<THREE.Object3D> {
   constructor() {
     super();
   }
@@ -32,17 +15,17 @@ export class ID3Loader extends Loader<Object3D> {
     if (this.resourcePath !== "") {
       resourcePath = this.resourcePath;
     } else if (this.path !== "") {
-      const relativeUrl = LoaderUtils.extractUrlBase(url);
-      resourcePath = LoaderUtils.resolveURL(relativeUrl, this.path);
+      const relativeUrl = THREE.LoaderUtils.extractUrlBase(url);
+      resourcePath = THREE.LoaderUtils.resolveURL(relativeUrl, this.path);
     } else {
-      resourcePath = LoaderUtils.extractUrlBase(url);
+      resourcePath = THREE.LoaderUtils.extractUrlBase(url);
     }
     return resourcePath;
   }
 
   load(
     url: string,
-    onLoad: (data: Object3D) => void,
+    onLoad: (data: THREE.Object3D) => void,
     onProgress?: (event: ProgressEvent) => void,
     onError?: (err: unknown) => void,
   ): void {
@@ -61,7 +44,7 @@ export class ID3Loader extends Loader<Object3D> {
       this.manager.itemEnd(url);
     };
 
-    const loader = new FileLoader(this.manager);
+    const loader = new THREE.FileLoader(this.manager);
 
     loader.setPath(this.path);
     loader.setResponseType("arraybuffer");
@@ -86,57 +69,63 @@ export class ID3Loader extends Loader<Object3D> {
     );
   }
 
-  parse(data: I3DGroup): Object3D {
+  parse(data: tip3.Group): THREE.Object3D {
     return this._parseObject(data);
   }
 
-  private _parseObject(obj: I3DObject) {
-    if (obj.type === I3DObjectType.Group) {
+  private _parseObject(obj: tip3.Object) {
+    if (obj.type === tip3.ObjectType.Group) {
       return this._parseGroup(obj);
     }
     return this._parseMesh(obj);
   }
 
-  private _parseGroup(id3Group: I3DGroup) {
-    const group = new Group();
-    for (const child of id3Group.children) {
+  private _parseGroup(tip3Group: tip3.Group) {
+    const group = new THREE.Group();
+    for (const child of tip3Group.children) {
       if (child.name === "BASE") {
         continue;
       }
       group.add(this._parseObject(child));
     }
-    if (id3Group.matrix) {
-      const matrix = new Matrix4();
-      matrix.fromArray(id3Group.matrix);
+    if (tip3Group.matrix) {
+      const matrix = new THREE.Matrix4();
+      matrix.fromArray(tip3Group.matrix);
       group.position.setFromMatrixPosition(matrix);
       group.quaternion.setFromRotationMatrix(matrix);
     }
     return group;
   }
 
-  private _parseMeshGeometry(id3Mesh: I3DMesh) {
-    let geometry = new BufferGeometry();
+  private _parseMeshGeometry(tip3Mesh: tip3.Mesh) {
+    let geometry = new THREE.BufferGeometry();
     geometry.setAttribute(
       "position",
-      new BufferAttribute(new Float32Array(id3Mesh.geometry.vertices), 3),
+      new THREE.BufferAttribute(
+        new Float32Array(tip3Mesh.geometry.vertices),
+        3,
+      ),
     );
 
-    if (id3Mesh.geometry.normals) {
+    if (tip3Mesh.geometry.normals) {
       geometry.setAttribute(
         "normal",
-        new BufferAttribute(new Float32Array(id3Mesh.geometry.normals), 3),
+        new THREE.BufferAttribute(
+          new Float32Array(tip3Mesh.geometry.normals),
+          3,
+        ),
       );
     }
 
-    if (id3Mesh.geometry.uvs) {
+    if (tip3Mesh.geometry.uvs) {
       geometry.setAttribute(
         "uv",
-        new BufferAttribute(new Float32Array(id3Mesh.geometry.uvs), 2),
+        new THREE.BufferAttribute(new Float32Array(tip3Mesh.geometry.uvs), 2),
       );
     }
 
-    geometry.setIndex(id3Mesh.geometry.primitives[0]!.indices);
-    if (id3Mesh.geometry.primitives[0]?.mode === 5) {
+    geometry.setIndex(tip3Mesh.geometry.primitives[0]!.indices);
+    if (tip3Mesh.geometry.primitives[0]?.mode === 5) {
       geometry = toTrianglesDrawMode(geometry, 1);
     }
 
@@ -145,22 +134,22 @@ export class ID3Loader extends Loader<Object3D> {
     return geometry;
   }
 
-  private _parseMesh(id3Mesh: I3DMesh) {
-    const geometry = this._parseMeshGeometry(id3Mesh);
+  private _parseMesh(tip3Mesh: tip3.Mesh) {
+    const geometry = this._parseMeshGeometry(tip3Mesh);
     const BASIC_COLORS = [
       0x00ff00, 0xff0000, 0x0000ff, 0xffff00, 0xffa500, 0x00ffff, 0xff00ff,
     ];
-    const material = new MeshStandardMaterial({
-      color: BASIC_COLORS[parseInt(id3Mesh.id) % BASIC_COLORS.length],
+    const material = new THREE.MeshStandardMaterial({
+      color: BASIC_COLORS[parseInt(tip3Mesh.id) % BASIC_COLORS.length],
       transparent: true,
       opacity: 1,
       roughness: 0.5,
       metalness: 0.5,
     });
-    material.side = DoubleSide;
+    material.side = THREE.DoubleSide;
 
-    const mesh = new Mesh(geometry, material);
-    mesh.name = id3Mesh.name;
+    const mesh = new THREE.Mesh(geometry, material);
+    mesh.name = tip3Mesh.name;
     return mesh;
   }
 }

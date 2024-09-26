@@ -1,59 +1,50 @@
-import {
-  type I3DObject,
-  type I3DGroup,
-  I3DObjectType,
-  type I3DMesh,
-  type I3DPrimitive,
-} from "~/core/i3d/types";
+import type * as osgjson from "~/core/osgjson";
+import * as tip3 from "~/core/tip3";
 
-import {
-  type OsgObject,
-  OsgObjectType,
-  type OsgNode,
-  type OsgMatrixTransform,
-  type OsgGeometry,
-  type OsgJSON,
-} from "../types";
+import * as osg from "../types";
 
 const EXPORT_NORMAL = false;
 const EXPORT_UV = false;
 
-export function convertModel(model: OsgObject, json: OsgJSON | string) {
+export function convertModel(
+  model: osg.Object,
+  osgJSON: osgjson.Model | string,
+) {
   const root = convertObject(model);
   return root;
 }
 
-function convertObject(osgObject: OsgObject): I3DObject {
+function convertObject(osgObject: osg.Object): tip3.Object {
   switch (osgObject.getTypeID()) {
-    case OsgObjectType.Node:
-    case OsgObjectType.MatrixTransform:
-      return convertToGroup(osgObject as OsgNode | OsgMatrixTransform);
-    case OsgObjectType.Geometry:
-      return convertToMesh(osgObject as OsgGeometry);
+    case osg.ObjectType.Node:
+    case osg.ObjectType.MatrixTransform:
+      return convertToGroup(osgObject as osg.Node | osg.MatrixTransform);
+    case osg.ObjectType.Geometry:
+      return convertToMesh(osgObject as osg.Geometry);
     default:
       console.error("Unsupported object type", osgObject);
       throw new Error(`Unsupported object type: ${osgObject.getTypeID()}`);
   }
 }
 
-function convertToGroup(osgGroup: OsgNode | OsgMatrixTransform): I3DGroup {
-  const id3Group: I3DGroup = {
-    type: I3DObjectType.Group,
+function convertToGroup(osgGroup: osg.Node | osg.MatrixTransform): tip3.Group {
+  const tip3Group: tip3.Group = {
+    type: tip3.ObjectType.Group,
     id: osgGroup.getInstanceID().toString(),
     name: osgGroup.getName(),
     children: [],
   };
-  if (osgGroup.getTypeID() === OsgObjectType.MatrixTransform) {
-    const osgMeshObject = osgGroup as OsgMatrixTransform;
-    id3Group.matrix = Array.from(osgMeshObject.getMatrix());
+  if (osgGroup.getTypeID() === osg.ObjectType.MatrixTransform) {
+    const osgMeshObject = osgGroup as osg.MatrixTransform;
+    tip3Group.matrix = Array.from(osgMeshObject.getMatrix());
   }
   for (const child of osgGroup.children) {
-    id3Group.children.push(convertObject(child));
+    tip3Group.children.push(convertObject(child));
   }
-  return id3Group;
+  return tip3Group;
 }
 
-function convertToMesh(osgMesh: OsgGeometry): I3DMesh {
+function convertToMesh(osgMesh: osg.Geometry): tip3.Mesh {
   const primitives = osgMesh
     .getPrimitives()
     .map((primitive) => {
@@ -61,14 +52,14 @@ function convertToMesh(osgMesh: OsgGeometry): I3DMesh {
         return {
           mode: primitive.mode,
           indices: Array.from(primitive.indices.getElements()),
-        } as I3DPrimitive;
+        } as tip3.Primitive;
       }
       return null;
     })
     .filter((p) => p !== null);
   const attributes = osgMesh.getAttributes();
   return {
-    type: I3DObjectType.Mesh,
+    type: tip3.ObjectType.Mesh,
     id: osgMesh.getInstanceID().toString(),
     name: osgMesh.getName(),
     geometry: {
@@ -81,6 +72,5 @@ function convertToMesh(osgMesh: OsgGeometry): I3DMesh {
         ? Array.from(attributes.TexCoord0.getElements())
         : undefined,
     },
-    children: [],
   };
 }
