@@ -1,4 +1,3 @@
-import type * as osgjson from "~/core/osgjson";
 import * as tip3 from "~/core/tip3";
 
 import * as osg from "../types";
@@ -6,10 +5,7 @@ import * as osg from "../types";
 const EXPORT_NORMAL = false;
 const EXPORT_UV = false;
 
-export function convertModel(
-  model: osg.Object,
-  osgJSON: osgjson.Model | string,
-) {
+export function convertModel(model: osg.Object) {
   const root = convertObject(model);
   return root;
 }
