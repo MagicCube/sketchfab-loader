@@ -1,44 +1,46 @@
-export enum OSGObjectType {
+export * from "./osg-json";
+
+export enum OsgObjectType {
   Node = 5,
   MatrixTransform = 22,
   Geometry = 17,
 }
 
-export type OSGObject = OSGNode | OSGMatrixTransform | OSGGeometry;
+export type OsgObject = OsgNode | OsgMatrixTransform | OsgGeometry;
 
-export interface OSGGenericObject<T extends OSGObjectType> {
+export interface OsgGenericObject<T extends OsgObjectType> {
   getTypeID(): T;
   getInstanceID(): number;
   getName(): string;
-  children: OSGObject[];
+  children: OsgObject[];
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export interface OSGNode extends OSGGenericObject<OSGObjectType.Node> {}
+export interface OsgNode extends OsgGenericObject<OsgObjectType.Node> {}
 
-export interface OSGMatrixTransform
-  extends OSGGenericObject<OSGObjectType.MatrixTransform> {
+export interface OsgMatrixTransform
+  extends OsgGenericObject<OsgObjectType.MatrixTransform> {
   getMatrix(): number[];
 }
 
-export interface OSGGeometry extends OSGGenericObject<OSGObjectType.Geometry> {
-  getAttributes(): OSGAttributes;
-  getPrimitives(): OSGPrimitive[];
+export interface OsgGeometry extends OsgGenericObject<OsgObjectType.Geometry> {
+  getAttributes(): OsgAttributes;
+  getPrimitives(): OsgPrimitive[];
 }
 
 // Parts of geometry
-export interface OSGPrimitive {
+export interface OsgPrimitive {
   mode: number;
-  indices: OSGAttribute<Uint16Array>;
+  indices: OsgAttribute<Uint16Array>;
 }
 
-export interface OSGAttributes {
-  Vertex: OSGAttribute;
-  Normal: OSGAttribute;
-  TexCoord0: OSGAttribute;
+export interface OsgAttributes {
+  Vertex: OsgAttribute;
+  Normal: OsgAttribute;
+  TexCoord0: OsgAttribute;
 }
 
-export interface OSGAttribute<
+export interface OsgAttribute<
   T extends Float32Array | Uint16Array = Float32Array,
 > {
   getElements(): T;

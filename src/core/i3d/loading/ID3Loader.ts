@@ -13,16 +13,12 @@ import {
 } from "three";
 import { toTrianglesDrawMode } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
-import { forEach } from "~/core/utils/traverse";
-
 import {
   type I3DMesh,
   type I3DObject,
   I3DObjectType,
   type I3DGroup,
 } from "../types";
-
-import osg from "./tesla-model-3.osg.json";
 
 const textDecoder = new TextDecoder();
 
@@ -51,10 +47,6 @@ export class ID3Loader extends Loader<Object3D> {
     onError?: (err: unknown) => void,
   ): void {
     // const resourcePath = this.getResourcePath(url);
-
-    forEach(osg["osg.Node"], (obj) => {
-      console.log(obj);
-    });
 
     this.manager.itemStart(url);
 

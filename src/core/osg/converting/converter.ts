@@ -7,43 +7,44 @@ import {
 } from "~/core/i3d/types";
 
 import {
-  type OSGObject,
-  OSGObjectType,
-  type OSGNode,
-  type OSGMatrixTransform,
-  type OSGGeometry,
+  type OsgObject,
+  OsgObjectType,
+  type OsgNode,
+  type OsgMatrixTransform,
+  type OsgGeometry,
+  type OsgJSON,
 } from "../types";
 
 const EXPORT_NORMAL = false;
 const EXPORT_UV = false;
 
-export function convertModel(model: OSGObject) {
+export function convertModel(model: OsgObject, json: OsgJSON | string) {
   const root = convertObject(model);
   return root;
 }
 
-function convertObject(osgObject: OSGObject): I3DObject {
+function convertObject(osgObject: OsgObject): I3DObject {
   switch (osgObject.getTypeID()) {
-    case OSGObjectType.Node:
-    case OSGObjectType.MatrixTransform:
-      return convertToGroup(osgObject as OSGNode | OSGMatrixTransform);
-    case OSGObjectType.Geometry:
-      return convertToMesh(osgObject as OSGGeometry);
+    case OsgObjectType.Node:
+    case OsgObjectType.MatrixTransform:
+      return convertToGroup(osgObject as OsgNode | OsgMatrixTransform);
+    case OsgObjectType.Geometry:
+      return convertToMesh(osgObject as OsgGeometry);
     default:
       console.error("Unsupported object type", osgObject);
       throw new Error(`Unsupported object type: ${osgObject.getTypeID()}`);
   }
 }
 
-function convertToGroup(osgGroup: OSGNode | OSGMatrixTransform): I3DGroup {
+function convertToGroup(osgGroup: OsgNode | OsgMatrixTransform): I3DGroup {
   const id3Group: I3DGroup = {
     type: I3DObjectType.Group,
     id: osgGroup.getInstanceID().toString(),
     name: osgGroup.getName(),
     children: [],
   };
-  if (osgGroup.getTypeID() === OSGObjectType.MatrixTransform) {
-    const osgMeshObject = osgGroup as OSGMatrixTransform;
+  if (osgGroup.getTypeID() === OsgObjectType.MatrixTransform) {
+    const osgMeshObject = osgGroup as OsgMatrixTransform;
     id3Group.matrix = Array.from(osgMeshObject.getMatrix());
   }
   for (const child of osgGroup.children) {
@@ -52,7 +53,7 @@ function convertToGroup(osgGroup: OSGNode | OSGMatrixTransform): I3DGroup {
   return id3Group;
 }
 
-function convertToMesh(osgMesh: OSGGeometry): I3DMesh {
+function convertToMesh(osgMesh: OsgGeometry): I3DMesh {
   const primitives = osgMesh
     .getPrimitives()
     .map((primitive) => {

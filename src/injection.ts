@@ -1,12 +1,12 @@
-import { type OSGObject } from "./core/osg";
+import { type OsgObject } from "./core/osg";
 import { convertModel } from "./core/osg/converting";
 
 Object.assign(window as unknown as never, {
-  convertModel(model: OSGObject) {
+  convertModel(model: OsgObject) {
     const result = convertModel(model);
     return result;
   },
-  saveModel(model: OSGObject) {
+  saveModel(model: OsgObject) {
     const result = convertModel(model);
     return JSON.stringify(result);
   },

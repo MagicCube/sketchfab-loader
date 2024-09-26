@@ -12,6 +12,18 @@ export function forEach<T extends Traversable>(
   }
 }
 
+export function* traverse<T extends Traversable>(
+  obj: T,
+  filter: (obj: T) => boolean = () => true,
+): Iterable<T> {
+  if (filter(obj)) {
+    yield obj;
+  }
+  for (const child of obj.children ?? []) {
+    yield* traverse(child as T, filter);
+  }
+}
+
 export function find<T extends Traversable>(
   obj: T,
   callback: (obj: T) => boolean,
