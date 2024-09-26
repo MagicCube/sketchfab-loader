@@ -1,6 +1,5 @@
 export interface Traversable {
   children?: Traversable[];
-  Children?: Traversable[];
 }
 
 export function forEach<T extends Traversable>(
@@ -8,7 +7,7 @@ export function forEach<T extends Traversable>(
   callback: (obj: T) => void,
 ) {
   callback(obj);
-  for (const child of obj.children ?? obj.Children ?? []) {
+  for (const child of obj.children ?? []) {
     forEach(child as T, callback);
   }
 }
@@ -20,7 +19,7 @@ export function find<T extends Traversable>(
   if (callback(obj)) {
     return obj;
   }
-  for (const child of obj.children ?? obj.Children ?? []) {
+  for (const child of obj.children ?? []) {
     const result = find(child as T, callback);
     if (result) {
       return result;
