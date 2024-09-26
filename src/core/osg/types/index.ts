@@ -24,12 +24,17 @@ export interface MatrixTransform
 export interface Geometry extends GenericObject<ObjectType.Geometry> {
   getAttributes(): Attributes;
   getPrimitives(): Primitive[];
+  getStateSet(): StateSet | null | undefined;
 }
 
 // Parts of geometry
 export interface Primitive {
   mode: number;
   indices: Attribute<Uint16Array>;
+}
+
+export interface StateSet {
+  getName(): string;
 }
 
 export interface Attributes {

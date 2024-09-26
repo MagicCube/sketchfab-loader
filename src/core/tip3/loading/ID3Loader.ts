@@ -1,11 +1,16 @@
 import * as THREE from "three";
 import { toTrianglesDrawMode } from "three/examples/jsm/utils/BufferGeometryUtils.js";
 
+import osgJSON from "~/app/test/tesla-model-3.osg.json";
+import { MaterialLoader } from "~/core/osgjson/loading";
+
 import * as tip3 from "../types";
 
 const textDecoder = new TextDecoder();
 
 export class Tip3Loader extends THREE.Loader<THREE.Object3D> {
+  private _materials: THREE.Material[] = [];
+
   constructor() {
     super();
   }
@@ -29,9 +34,12 @@ export class Tip3Loader extends THREE.Loader<THREE.Object3D> {
     onProgress?: (event: ProgressEvent) => void,
     onError?: (err: unknown) => void,
   ): void {
-    // const resourcePath = this.getResourcePath(url);
+    const resourcePath =
+      "https://media.sketchfab.com/models/55daee6824b945bb94f9018197b7949d/fc9af78e5ce74c34b38bd5d359649664/";
 
     this.manager.itemStart(url);
+
+    this._materials = new MaterialLoader(resourcePath).loadMaterials(osgJSON);
 
     const _onError = (e: unknown) => {
       if (onError) {
@@ -136,20 +144,23 @@ export class Tip3Loader extends THREE.Loader<THREE.Object3D> {
 
   private _parseMesh(tip3Mesh: tip3.Mesh) {
     const geometry = this._parseMeshGeometry(tip3Mesh);
-    const BASIC_COLORS = [
-      0x00ff00, 0xff0000, 0x0000ff, 0xffff00, 0xffa500, 0x00ffff, 0xff00ff,
-    ];
-    const material = new THREE.MeshStandardMaterial({
-      color: BASIC_COLORS[parseInt(tip3Mesh.id) % BASIC_COLORS.length],
-      transparent: true,
-      opacity: 1,
-      roughness: 0.5,
-      metalness: 0.5,
-    });
-    material.side = THREE.DoubleSide;
-
+    let material: THREE.Material | undefined = undefined;
+    const foundMaterial = this._findMaterial(tip3Mesh.name);
+    if (foundMaterial) {
+      material = foundMaterial;
+    }
+    if (!material) {
+      console.warn(`No material found for mesh: ${tip3Mesh.name}`);
+      material = new THREE.MeshStandardMaterial();
+    }
     const mesh = new THREE.Mesh(geometry, material);
     mesh.name = tip3Mesh.name;
     return mesh;
+  }
+
+  private _findMaterial(name: string) {
+    return this._materials.find(
+      (material) => material.name === name || name.includes(material.name),
+    );
   }
 }

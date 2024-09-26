@@ -11,6 +11,11 @@ export interface Group extends GenericContainer<ObjectType.Group> {
 
 export interface Mesh extends GenericObject<ObjectType.Mesh> {
   geometry: Geometry;
+  material?: Material;
+}
+
+export interface Material {
+  name: string;
 }
 
 export interface GenericObject<T extends ObjectType> {

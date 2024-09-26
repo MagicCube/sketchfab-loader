@@ -1,4 +1,8 @@
-export interface Model
+import { type StateSet } from "./StateSet";
+
+export * from "./StateSet";
+
+export interface RootModel
   extends ObjectDeclaration<"osg.Node", Pick<Node, "Children">> {
   Generator: string;
   Version: number;
@@ -9,7 +13,7 @@ export type ObjectDeclaration<K extends string, V> = {
 };
 
 export interface Object {
-  UniqueID: number;
+  UniqueID?: number;
 }
 
 export interface NamedObject extends Object {
@@ -30,11 +34,4 @@ export interface MatrixTransform extends Node {
 
 export interface Geometry extends NamedObject {
   StateSet?: ObjectDeclaration<"osg.StateSet", StateSet | Object>;
-}
-
-export interface StateSet extends Object {
-  RenderingHint?: string;
-  AttributeList: [];
-  TextureAttributeList: [];
-  UserDataContainer: [];
 }

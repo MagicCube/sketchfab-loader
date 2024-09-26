@@ -3,7 +3,7 @@ import * as tip3 from "~/core/tip3";
 import * as osg from "../types";
 
 const EXPORT_NORMAL = false;
-const EXPORT_UV = false;
+const EXPORT_UV = true;
 
 export function convertModel(model: osg.Object) {
   const root = convertObject(model);
@@ -40,8 +40,8 @@ function convertToGroup(osgGroup: osg.Node | osg.MatrixTransform): tip3.Group {
   return tip3Group;
 }
 
-function convertToMesh(osgMesh: osg.Geometry): tip3.Mesh {
-  const primitives = osgMesh
+function convertToMesh(osgGeometry: osg.Geometry): tip3.Mesh {
+  const primitives = osgGeometry
     .getPrimitives()
     .map((primitive) => {
       if (primitive?.indices) {
@@ -53,11 +53,17 @@ function convertToMesh(osgMesh: osg.Geometry): tip3.Mesh {
       return null;
     })
     .filter((p) => p !== null);
-  const attributes = osgMesh.getAttributes();
+  const attributes = osgGeometry.getAttributes();
+  let material: tip3.Material | undefined = undefined;
+  if (osgGeometry.getStateSet()?.getName()) {
+    material = {
+      name: osgGeometry.getStateSet()!.getName(),
+    };
+  }
   return {
     type: tip3.ObjectType.Mesh,
-    id: osgMesh.getInstanceID().toString(),
-    name: osgMesh.getName(),
+    id: osgGeometry.getInstanceID().toString(),
+    name: osgGeometry.getName(),
     geometry: {
       vertices: Array.from(attributes.Vertex.getElements()),
       primitives,
@@ -68,5 +74,6 @@ function convertToMesh(osgMesh: osg.Geometry): tip3.Mesh {
         ? Array.from(attributes.TexCoord0.getElements())
         : undefined,
     },
+    material,
   };
 }
